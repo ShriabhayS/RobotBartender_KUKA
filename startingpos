@@ -1,0 +1,27 @@
+package application;
+
+import com.kuka.roboticsAPI.applicationModel.RoboticsAPIApplication;
+import com.kuka.roboticsAPI.deviceModel.LBR;
+import static com.kuka.roboticsAPI.motionModel.BasicMotions.*;
+import com.kuka.roboticsAPI.geometricModel.ObjectFrame;
+
+public class testframes_robo extends RoboticsAPIApplication {
+    private LBR lbr;
+
+    @Override
+    public void initialize() {
+        lbr = getContext().getDeviceFromType(LBR.class);
+    }
+
+    @Override
+    public void run() {
+        // If your frame is under World, use "/World/StartingPosition"
+        ObjectFrame startPos = getApplicationData().getFrame("/StartingPosition");
+
+        // Move the robot point-to-point to your frame
+        lbr.move(ptp(startPos));
+
+        // Optional: slower & safer
+        // lbr.move(ptp(startPos).setJointVelocityRel(0.2));
+    }
+}
