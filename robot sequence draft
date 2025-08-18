@@ -1,0 +1,137 @@
+package application;  
+
+
+import com.kuka.roboticsAPI.applicationModel.RoboticsAPIApplication;
+import com.kuka.roboticsAPI.deviceModel.LBR;
+import static com.kuka.roboticsAPI.motionModel.BasicMotions.*; //to use LIN and PTP directly in our code
+import com.kuka.roboticsAPI.geometricModel.ObjectFrame;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class BartenderSequence extends RoboticsAPIApplication {
+    
+
+    //setting we can change
+    private static final String BASE_PATH = "/World"; 
+    // where are our frames are stored
+    // if frames are top-level, use "/".
+
+    private static final boolean LOOP = true;  
+    // true = repeat forever until you stop the program on the smartPAD
+    // false = go through the sequence once
+
+    private static final double VEL_REL = 0.25; 
+    // speed for PTP moves (relative to robot’s max joint speed). 
+
+    private static final double BLEND_REL = 0.10; 
+    // "blending" makes the robot flow smoothly through frames 
+    // 0.0 = stop fully, 0.1–0.2 = nice smooth motion.
+
+    private static final double CART_VEL = 120;  
+    // cartesian velocity in mm/s for LIN moves.
+
+    private static final double CART_ACC = 600;  
+    // cartesian acceleration in mm/s^2 for LIN moves.
+
+    private static final long   DWELL_MS = 200;  
+    // pause at each frame in milliseconds (200 ms = 0.2 s).
+    // set to 0 if you don’t want pauses.
+
+    private LBR lbr;  
+    // the robot type is the KUKA lightweight arm.
+
+    enum Mode { PTP, LIN }  
+    // PTP = joint-based motion (fast, curved path)
+    // LIN = straight-line Cartesian motion (slower, precise)
+
+    // each "Step" = a frame name + which motion mode to use
+    static class Step {
+        final String name;
+        final Mode mode;
+        Step(String name, Mode mode) { 
+            this.name = name; 
+            this.mode = mode; 
+        }
+    }
+
+    // ---------- da bartender sequence ----------
+    private static final List<Step> STEPS = Arrays.asList(
+        new Step("StartingPosition",     Mode.LIN), // start
+        new Step("Pick_BentArm",         Mode.LIN), // bent arm to pick up bottle
+        new Step("Back_To_Start",        Mode.LIN), // return to start
+        new Step("ToRig_Side",           Mode.LIN), // move to rig (side)
+        new Step("Rig_BentArm_Down",     Mode.LIN), // bent arm down to rig
+        new Step("Flick_Cap",            Mode.LIN), // flick off cap
+        new Step("Back_Straight",        Mode.LIN), // straighten again
+        new Step("Arm_Up",               Mode.LIN), // lift arm
+        new Step("Hand_To_Customer",     Mode.LIN)  // present bottle
+    );
+
+    @Override
+    public void initialize() {
+        // runs once at the beginning.
+        // we "get" the robot from the system context.
+        lbr = getContext().getDeviceFromType(LBR.class);
+    }
+
+    @Override
+    public void run() {
+        // this is where the sequence happens.
+        // sunrise automatically calls run() when you start the app.
+
+        do {
+            // go through each step in order
+            for (Step s : STEPS) {
+                // find the frame in Application Data
+                ObjectFrame f = requireFrame(joinPath(BASE_PATH, s.name));
+
+                // decide how to move: LIN vs PTP
+                switch (s.mode) {
+                    case LIN:
+                        // straight-line move
+                        lbr.move(lin(f)
+                            .setCartVelocity(CART_VEL)
+                            .setCartAcceleration(CART_ACC)
+                            .setBlendingRel(BLEND_REL));
+                        break;
+                    case PTP:
+                    default:
+                        // joint-based move (fast reposition)
+                        lbr.move(ptp(f)
+                            .setJointVelocityRel(VEL_REL)
+                            .setBlendingRel(BLEND_REL));
+                }
+
+                // optional pause at each frame
+                if (DWELL_MS > 0) {
+                    com.kuka.roboticsAPI.controllerModel.ThreadUtil.milliSleep(DWELL_MS);
+                }
+            }
+        } while (LOOP);  
+        // if LOOP = true → repeats forever
+        // if LOOP = false → runs once and stops
+    }
+
+    // ---------- helper functions ----------
+
+    private String joinPath(String base, String leaf) {
+        // combine BASE_PATH + frame name into a full path
+        // eg: "/World" + "StartingPosition" → "/World/StartingPosition"
+        String b = (base == null || base.isEmpty()) ? "/" : base;
+        if (!b.startsWith("/")) b = "/" + b;
+        if (b.endsWith("/")) return b + leaf;
+        return b + "/" + leaf;
+    }
+
+    private ObjectFrame requireFrame(String fullPath) {
+        // look up the frame in Application Data
+        ObjectFrame f = getApplicationData().getFrame(fullPath);
+        if (f == null) {
+            // if the frame doesn’t exist, throw an error with a clear message
+            throw new IllegalArgumentException("Frame not found: \"" + fullPath + "\". " +
+                "Check Application Data or adjust BASE_PATH / frame name.");
+        }
+        return f;
+    }
+}
