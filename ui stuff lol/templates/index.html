@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Robotic Bartender</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="wrap">
+        <h1>Robotic Bartender Control Panel</h1>
+        <div class="button-group" style="display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
+            <button onclick="robotFunc(1)">Bundaberg</button>
+            <button onclick="robotFunc(2)">Schweppes</button>
+            <button onclick="robotFunc(3)">Coca-Cola</button>
+            <button onclick="robotFunc(4)">San Pellegrino</button>
+            <button onclick="robotFunc(5)">Fever-Tree</button>
+            <button onclick="robotFunc(6)">Pepsi</button>
+            <button onclick="robotFunc(7)">Solo</button>
+            <button onclick="robotFunc(8)">Sprite</button>
+            <button onclick="robotFunc(9)">Mountain Dew</button>
+            <button onclick="robotFunc(13)">Red Bull</button>
+        </div>
+    </div>
+    <script>
+        function robotFunc(actionNumber) {
+            fetch(`/api/${actionNumber}`, {
+                method: 'POST'
+            });
+        }
+    </script>
+</body>
+</html>

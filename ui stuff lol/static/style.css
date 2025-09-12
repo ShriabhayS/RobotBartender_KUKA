@@ -1,0 +1,45 @@
+.wrap{
+    background: #fff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 600px;
+}
+
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+button {
+    width: 100%;
+    background: linear-gradient(90deg, #0077ff 0%, #00c6ff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    transition: background 0.2s, transform 0.2s;
+}
+
+button:hover, button:focus {
+    background: linear-gradient(90deg, #005fa3 0%, #0096c7 100%);
+    transform: translateY(-2px) scale(1.04);
+    outline: none;
+}
+
+button:active {
+    background: linear-gradient(90deg, #005fa3 0%, #0077ff 100%);
+    transform: scale(0.98);
+}
