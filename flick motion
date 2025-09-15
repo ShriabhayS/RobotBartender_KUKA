@@ -1,0 +1,32 @@
+double SLIDE_UP = 3.0;          // how far to slide upward to seat the tooth under the cap
+double APPROACH_ANGLE = 20.0;   // initial bottle tilt for hooking the cap under the opener tooth
+double SETTLE_ANGLE = 8.0;      // angle after seating, closer to vertical for a clean pry
+double FLICK_ANGLE = 12.0;      // additional rotation for the actual flick pop motion
+double RETRACT_DIST = 10.0;     // how far to back off after popping the cap
+
+
+moveTo(F_OPENER.offset(0, 0, -15).rotX(APPROACH_ANGLE)); // 1) 
+// move the robot to just below the opener tooth while holding the bottle at a 20 deg tilt
+// positions 15 mm below the opner along its z-axis
+// rotates around the bottle's local x-axis to tilt it
+
+moveTo(F_OPENER.offset(0, 0, 0).rotX(APPROACH_ANGLE));   // 2) Slide up 2–3 mm
+// move straight upward into the seating position
+// final position is now level with the opener (offset(0,0,0)
+//keeps the same 20 def tilt during the upward slide
+//this motion wedges the opener tooth under the cap lip
+
+
+moveTo(F_OPENER.offset(0, 0, 0).rotX(SETTLE_ANGLE));     // 3) Bring bottle closer to vertical
+//slowly rotate the bottle back toward vertical for a cleaner pry motion
+//reduces tilt from 20 to 8 deg tilt
+// keeps cap firmly hooked but positions it so the flick action works efficently
+
+moveQuick(F_OPENER.offset(0, 0, 0).rotX(SETTLE_ANGLE + FLICK_ANGLE), 0.1); 
+// apply a quick burst of motion to pop the cap off
+// moves from settle angle to settle angle + flick angle
+// 0.1s -> very fast, giving that flick effect
+
+moveTo(F_OPENER.offset(0, 0, -RETRACT_DIST));// 5) Retract
+// move the bottle straight back down after opening
+// ensures the opener tooth clears the cap area and bottle neck
