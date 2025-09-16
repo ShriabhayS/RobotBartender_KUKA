@@ -64,12 +64,12 @@ public class Bartender extends RoboticsAPIApplication {
 //        springRobot.parametrize(CartDOF.ALL).setDamping(0.4);
 
         logger.info("Initializing Automatic Mode");
-//        try {
-//            OPCUA.SetUp();
-//            OPCUA.ServerUpdate();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            OPCUA.SetUp();
+            OPCUA.ServerUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         gripper_tool.attachTo(robot.getFlange());
         mF.setLEDBlue(true);
@@ -114,7 +114,7 @@ public class Bartender extends RoboticsAPIApplication {
             	
             	// TODO: Code to move gripper to the bottle holder
 
-                switch (OPCUA.ProgID) {
+                switch (OPCUA.int1) {
                 // TODO: Switch statements for each bottle, code here should just be to move to the relevant frame and grab bottle. Random legacy code below, can be changed
                     case 0:
                         logger.error("Program 0 Started");
