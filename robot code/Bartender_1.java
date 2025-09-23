@@ -180,10 +180,10 @@ public class Bartender extends RoboticsAPIApplication {
                         if (!OPCUA.Connected) break;
 
                         try {
-                            // Build absolute target frame relative to the base (World)
-                            gripper.open();
-                            ThreadUtil.milliSleep(2000);
-                            gripper.close();
+                            // // Build absolute target frame relative to the base (World)
+                            // gripper.open();
+                            // ThreadUtil.milliSleep(2000);
+                            // gripper.close();
                          // Then go pick CocaCola:
                             ObjectFrame approach = getApplicationData().getFrame("/CocaCola/Approach");
                             ObjectFrame grasp    = getApplicationData().getFrame("/CocaCola/Grasp");
@@ -204,7 +204,8 @@ public class Bartender extends RoboticsAPIApplication {
                         break;
 
                     case 5: // Move to calibration frame P23
-                        logger.info("Program 5: Moving to calibration frame P23");
+                        // logger.info("Program 5: Moving to calibration frame P23");
+                        logger.info("Program 5 Started");
                         logger.info("Fever-tree");
                         OPCUA.setReady(false);
 
