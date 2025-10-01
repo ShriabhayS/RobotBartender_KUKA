@@ -4,29 +4,151 @@
     <meta charset="UTF-8">
     <title>Robotic Bartender</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
     <div class="wrap">
-        <h1>Robotic Bartender Control Panel</h1>
-        <div class="button-group" style="display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
-            <button onclick="robotFunc(1)">Bundaberg</button>
-            <button onclick="robotFunc(2)">Schweppes</button>
-            <button onclick="robotFunc(3)">Coca-Cola</button>
-            <button onclick="robotFunc(4)">San Pellegrino</button>
-            <button onclick="robotFunc(5)">Fever-Tree</button>
-            <button onclick="robotFunc(6)">Pepsi</button>
-            <button onclick="robotFunc(7)">Solo</button>
-            <button onclick="robotFunc(8)">Sprite</button>
-            <button onclick="robotFunc(9)">Mountain Dew</button>
-            <button onclick="robotFunc(13)">Red Bull</button>
+        <h2 class="pb-3">Robotic Bartender Control Panel</h2>
+        <div class="big-btns button-group" style="padding-bottom: 10px; display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
+            <button onclick="selectAction(1)" data-bs-toggle="modal" data-bs-target="#bottleModal">Bundaberg</button>
+            <button onclick="selectAction(2)">Schweppes</button>
+            <button onclick="selectAction(3)">Coca-Cola</button>
+            <button onclick="selectAction(4)">San Pellegrino</button>
+            <button onclick="selectAction(5)">Fever-Tree</button>
+            <button onclick="selectAction(6)">Pepsi</button>
+            <button onclick="selectAction(7)">Solo</button>
+            <button onclick="selectAction(8)">Sprite</button>
+            <button onclick="selectAction(9)">Mountain Dew</button>
+            <button onclick="selectAction(13)">Red Bull</button>
         </div>
     </div>
+
+    <!-- Hidden input to store selected action before confirming in modal -->
+    <input type="hidden" id="selectedAction" name="selectedAction" value="">
+
+    <div class="modal fade" tabindex="-1" id="bottleModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-body">
+                <div style="width:100%;">
+                    <a class="btn btn-link" data-bs-dismiss="modal">← Back</a>
+                    <center class="pt-3 pb-3">
+                        <h4>Would you like your bottle opened?</h4>
+                    </center>
+                    <!-- <h4 id="openBottleLabel">Open bottle? (No)</h4> -->
+                    <label style="display: flex; align-items: center; gap: 8px; padding-bottom: -15px;">
+                        <input type="checkbox" id="openBottle" name="openBottle" style="display:none;">
+                        <button type="button" id="openOn" class="toggle-btn" onclick="setOpenBottle(true)" style="padding: 6px 16px;">Yes</button>
+                        <button type="button" id="openOff" class="toggle-btn" onclick="setOpenBottle(false)" style="padding: 6px 16px;">No</button>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer d-flex flex-column">
+                <button type="button" class="btn btn-primary w-100" id="modalSaveBtn" onclick="confirmAction()" disabled>Place Order!</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        function robotFunc(actionNumber) {
-            fetch(`/api/${actionNumber}`, {
-                method: 'POST'
+        // robotFunc sends the order. If bottleOpen is provided, uses that; otherwise reads checkbox.
+        function robotFunc(actionNumber, bottleOpen) {
+            const bottleVal = (typeof bottleOpen !== 'undefined') ? (bottleOpen ? 1 : 0) : (document.getElementById('openBottle').checked ? 1 : 0);
+            fetch(`/sendOrder/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    actionNumber: actionNumber,
+                    bottleOpen: bottleVal
+                })
             });
         }
     </script>
+
+    <script>
+        function selectAction(actionNumber) {
+            document.getElementById('selectedAction').value = actionNumber;
+
+            // Reset open bottle choice (no selection) and disable Place Order until the user selects Yes/No
+            document.getElementById('openBottle').checked = false;
+            // remove any active classes
+            document.getElementById('openOn').classList.remove('toggle-active');
+            document.getElementById('openOff').classList.remove('toggle-active');
+            // track choice as undefined until user picks
+            window.openBottleChoice = undefined;
+            document.getElementById('modalSaveBtn').disabled = true;
+
+            // Show the Bootstrap modal
+            const modalEl = document.getElementById('bottleModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+
+        // Called when the modal Save changes button is clicked. Reads the stored action and calls robotFunc.
+        function confirmAction() {
+            const action = parseInt(document.getElementById('selectedAction').value, 10);
+            if (!action) {
+                // nothing selected
+                return;
+            }
+
+            // Use the chosen openBottleChoice (must be true/false) — if somehow unset, default to false
+            const bottleChoice = (typeof window.openBottleChoice !== 'undefined') ? !!window.openBottleChoice : false;
+
+            // Call robotFunc with explicit bottleOpen
+            robotFunc(action, bottleChoice);
+
+            // Hide the modal
+            const modalEl = document.getElementById('bottleModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        socket.on('connect', function() {
+            socket.emit('my event', {data: 'I\'m connected!'});
+        });
+    </script>
+
+    <script>
+        function setOpenBottle(state) {
+            const cb = document.getElementById('openBottle');
+            const onBtn = document.getElementById('openOn');
+            const offBtn = document.getElementById('openOff');
+            cb.checked = state;
+            // document.getElementById('openBottleLabel').textContent = `Open bottle? (${state ? 'Yes' : 'No'})`;
+
+            // Toggle visual active state
+            if (state) {
+                onBtn.classList.add('toggle-active');
+                onBtn.setAttribute('aria-pressed', 'true');
+                offBtn.classList.remove('toggle-active');
+                offBtn.setAttribute('aria-pressed', 'false');
+            } else {
+                offBtn.classList.add('toggle-active');
+                offBtn.setAttribute('aria-pressed', 'true');
+                onBtn.classList.remove('toggle-active');
+                onBtn.setAttribute('aria-pressed', 'false');
+            }
+
+            // Store explicit choice and enable the Place Order button
+            window.openBottleChoice = !!state;
+            const saveBtn = document.getElementById('modalSaveBtn');
+            if (saveBtn) saveBtn.disabled = false;
+        }
+
+        // Initialize toggle state on page load based on checkbox (default unchecked)
+        document.addEventListener('DOMContentLoaded', function () {
+            const initialState = document.getElementById('openBottle').checked;
+            setOpenBottle(initialState);
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

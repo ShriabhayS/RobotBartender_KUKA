@@ -19,12 +19,12 @@ body{
     justify-content: center;
     height: 100vh;
 }
-button {
+.big-btns button {
     width: 100%;
     background: linear-gradient(90deg, #0077ff 0%, #00c6ff 100%);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 8px !important;
     padding: 12px 28px;
     font-size: 1rem;
     font-weight: 600;
@@ -33,13 +33,45 @@ button {
     transition: background 0.2s, transform 0.2s;
 }
 
-button:hover, button:focus {
+.big-btns button:hover{
     background: linear-gradient(90deg, #005fa3 0%, #0096c7 100%);
+}
+
+button{
+    transition: .2s !important;
+    color: #fff;
+    border: none;
+    border-radius: 8px !important;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+button:hover{
     transform: translateY(-2px) scale(1.04);
     outline: none;
+}
+
+
+/* Toggle buttons (Yes/No) share base button styles but are sized to content */
+.toggle-btn {
+    width: 100%;
+    padding: 6px 14px;
+    font-size: 0.95rem;
+    background: grey;
+}
+
+/* Active state for toggle buttons */
+.toggle-active {
+    background: limegreen;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+    transform: translateY(-1px) scale(1.03);
 }
 
 button:active {
     background: linear-gradient(90deg, #005fa3 0%, #0077ff 100%);
     transform: scale(0.98);
 }
+
