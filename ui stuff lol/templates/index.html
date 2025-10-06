@@ -4,48 +4,152 @@
     <meta charset="UTF-8">
     <title>Robotic Bartender</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- <link rel="stylesheet" href="../static/style.css"> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
     <div class="wrap">
-        <h2 class="pb-3">Robotic Bartender Control Panel</h2>
-        <div class="big-btns button-group" style="padding-bottom: 10px; display: flex; flex-direction: column; gap: 16px; align-items: center; width: 100%;">
-            <button onclick="selectAction(1)">Bundaberg</button>
-            <button onclick="selectAction(2)">Schweppes</button>
-            <button onclick="selectAction(3)">Coca-Cola</button>
-            <button onclick="selectAction(4)">San Pellegrino</button>
-            <button onclick="selectAction(5)">Fever-Tree</button>
-            <button onclick="selectAction(6)">Pepsi</button>
-            <button onclick="selectAction(7)">Solo</button>
-            <button onclick="selectAction(8)">Sprite</button>
-            <button onclick="selectAction(9)">Mountain Dew</button>
-            <button onclick="selectAction(13)">Red Bull</button>
+        <center>
+            <div class="pt-3 heading">
+                ☇&nbsp;&nbsp; Robotic &nbsp;&nbsp;☇
+                <div class="big">Bartender</div>
+            </div>
+        </center>
+        <div class="btn-wrap">
+            <button onclick="selectAction(this, 9)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='mountaindew.png') }}" alt="mountaindew">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Mountain Dew</div>
+                    <div class="drink-desc">Citrus soda, energizing and sweet</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 13)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='redbull.png') }}" alt="redbull">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Red Bull</div>
+                    <div class="drink-desc">Energy drink, invigorating and bold</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 6)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='pepsi.png') }}" alt="pepsi">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Pepsi</div>
+                    <div class="drink-desc">Bold cola, smooth and sweet</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 8)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='sprite.png') }}" alt="sprite">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Sprite</div>
+                    <div class="drink-desc">Lemon-lime soda, crisp and clear</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 3)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='cocacola.png') }}" alt="cocacola">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Coca-Cola</div>
+                    <div class="drink-desc">Iconic cola, sweet and fizzy</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 2)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='schweppes.png') }}" alt="schweppes">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Schweppes</div>
+                    <div class="drink-desc">Premium tonic, crisp and refreshing</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 1)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='bundaberg.png') }}" alt="bundaberg" style="height: 400px;">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Bundaberg</div>
+                    <div class="drink-desc">Classic ginger beer, rich & spicy</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 7)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='solo.png') }}" alt="solo">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Solo</div>
+                    <div class="drink-desc">Lemon drink, tangy and refreshing</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 4)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='sanpellegrino.png') }}" alt="sanpellegrino">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">San Pellegrino</div>
+                    <div class="drink-desc">Italian sparkling mineral water</div>
+                </div>
+            </button>
+            <button onclick="selectAction(this, 5)">
+                <div class="img-area">
+                    <img src="{{ url_for('static', filename='fevertree.png') }}" alt="fevertree">
+                </div>
+                <div class="drink-info">
+                    <div class="drink-title">Fever-Tree</div>
+                    <div class="drink-desc">Natural mixers, aromatic and light</div>
+                </div>
+            </button>
+        </div>
         </div>
     </div>
 
     <!-- Hidden input to store selected action before confirming in modal -->
     <input type="hidden" id="selectedAction" name="selectedAction" value="">
 
-    <div class="modal fade" tabindex="-1" id="bottleModal">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade modal-fullscreen" tabindex="-1" id="bottleModal">
+        <div class="modal-dialog">
             <div class="modal-content">
-            <div class="modal-body">
-                <div style="width:100%;">
-                    <a class="btn btn-link" data-bs-dismiss="modal">← Back</a>
-                    <center class="pt-3 pb-3">
-                        <h4>Would you like your bottle opened?</h4>
-                    </center>
-                    <!-- <h4 id="openBottleLabel">Open bottle? (No)</h4> -->
-                    <label style="display: flex; align-items: center; gap: 8px; padding-bottom: -15px;">
-                        <input type="checkbox" id="openBottle" name="openBottle" style="display:none;">
-                        <button type="button" id="openOn" class="toggle-btn" onclick="setOpenBottle(true)" style="padding: 6px 16px;">Yes</button>
-                        <button type="button" id="openOff" class="toggle-btn" onclick="setOpenBottle(false)" style="padding: 6px 16px;">No</button>
-                    </label>
+                <div class="modal-left">
+                    <a class="btn btn-link text-light p-0 text-left" style="position: absolute; width: 100px; left: 30px; top: 50px;" data-bs-dismiss="modal">← Back</a>
+                    <div class="modal-confirm-text mt-3">
+                        <h2 id="modalBottleTitle">Confirm selection</h2>
+                        <p id="modalBottleDesc" class="text-muted">Would you like your bottle opened?</p>
+                    </div>
+
+                    <div class="confirm-actions mt-4">
+                        <button type="button" id="openOn" class="toggle-btn secondary text-center" onclick="setOpenBottle(true)">Open Bottle</button>
+                        <button type="button" id="openOff" class="toggle-btn secondary text-center" onclick="setOpenBottle(false)">Keep Sealed</button>
+                        <button type="button" id="modalSaveBtn" class="btn btn-primary mt-4" onclick="showConfirmOverlay()">Place Order</button>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer d-flex flex-column">
-                <button type="button" class="btn btn-primary w-100" id="modalSaveBtn" onclick="confirmAction()" disabled>Place Order!</button>
-            </div>
+
+                <div class="modal-right">
+                    <div class="modal-bottle-preview">
+                        <img id="modalBottleImg" src="" alt="bottle" />
+                    </div>
+                </div>
+
+                <!-- Confirm overlay inside modal -->
+                <div class="confirm-overlay" id="confirmOverlay">
+                    <div class="confirm-box">
+                        <h5>Confirm Order</h5>
+                        <p class="small text-muted">Are you sure you want to place this order?</p>
+                        <div class="d-flex gap-3 justify-content-center mt-3">
+                            <button class="btn btn-secondary" onclick="hideConfirmOverlay()">Cancel</button>
+                            <button class="btn btn-primary" onclick="confirmAction()">Yes, place order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- hidden checkbox used by existing code to persist open choice -->
+                <input type="checkbox" id="openBottle" name="openBottle" style="display:none;" />
             </div>
         </div>
     </div>
@@ -69,17 +173,35 @@
     </script>
 
     <script>
-        function selectAction(actionNumber) {
+        function selectAction(clickedBtn, actionNumber) {
             document.getElementById('selectedAction').value = actionNumber;
 
-            // Reset open bottle choice (no selection) and disable Place Order until the user selects Yes/No
-            document.getElementById('openBottle').checked = false;
-            // remove any active classes
+            // Extract the image, title, and description from the clicked button
+            const imgEl = clickedBtn.querySelector('.img-area img');
+            const titleEl = clickedBtn.querySelector('.drink-title');
+            const descEl = clickedBtn.querySelector('.drink-desc');
+
+            const modalImg = document.getElementById('modalBottleImg');
+            const modalTitle = document.getElementById('modalBottleTitle');
+            const modalDesc = document.getElementById('modalBottleDesc');
+
+            if (imgEl && modalImg) {
+                // prefer the original attribute so we don't get an empty value from computed src in some environments
+                const src = imgEl.getAttribute('src') || imgEl.src;
+                modalImg.src = src;
+            }
+            if (titleEl && modalTitle) modalTitle.textContent = titleEl.textContent;
+            if (descEl && modalDesc) modalDesc.textContent = descEl.textContent;
+
+            // Reset open bottle choice (no selection) and visual toggles
+            const cb = document.getElementById('openBottle');
+            if (cb) cb.checked = false;
+            window.openBottleChoice = undefined;
             document.getElementById('openOn').classList.remove('toggle-active');
             document.getElementById('openOff').classList.remove('toggle-active');
-            // track choice as undefined until user picks
-            window.openBottleChoice = undefined;
-            document.getElementById('modalSaveBtn').disabled = true;
+            // Enable Place Order only after a choice is made; default allow pressing (you can change behavior)
+            const saveBtn = document.getElementById('modalSaveBtn');
+            if (saveBtn) saveBtn.disabled = false;
 
             // Show the Bootstrap modal
             const modalEl = document.getElementById('bottleModal');
@@ -106,6 +228,16 @@
             const modal = bootstrap.Modal.getInstance(modalEl);
             if (modal) modal.hide();
         }
+
+        function showConfirmOverlay() {
+            const overlay = document.getElementById('confirmOverlay');
+            if (overlay) overlay.classList.add('active');
+        }
+
+        function hideConfirmOverlay() {
+            const overlay = document.getElementById('confirmOverlay');
+            if (overlay) overlay.classList.remove('active');
+        }
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
@@ -115,6 +247,9 @@
             socket.emit('my event', {data: 'I\'m connected!'});
         });
     </script>
+
+    <!-- Tilt behavior for horizontal scroller images -->
+    <script src="{{ url_for('static', filename='tilt.js') }}"></script>
 
     <script>
         function setOpenBottle(state) {

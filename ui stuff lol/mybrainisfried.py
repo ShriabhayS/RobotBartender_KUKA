@@ -58,6 +58,6 @@ async def sendOrder(val, bottle):
         print("Set R1c_Start to True")
 
 if __name__ == "__main__":
-    socketio.run(app, host='192.168.0.110', port=5000)
-    # app.run()
+    socketio.run(app, host='127.0.0.1', port=5000)
+    # app.run(debug=True)
     # asyncio.run(main())
