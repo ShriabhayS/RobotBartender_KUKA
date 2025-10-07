@@ -4,6 +4,15 @@ from asyncua import Client
 from asyncua import ua
 import asyncio
 
+
+'''
+Drink 1: Holsten Pomegranate
+Drink 2: Carlton Dry
+Drink 3: Somersby
+Drink 4: Holsten Mojito
+Drink 5 + Etc Coming soon.
+'''
+
 '''
 Ay bruh I spent a long time on this (like 3 hours) so this project better work.. capiche?
 - YaBoiEkam
@@ -58,6 +67,6 @@ async def sendOrder(val, bottle):
         print("Set R1c_Start to True")
 
 if __name__ == "__main__":
-    socketio.run(app, host='127.0.0.1', port=5000)
-    # app.run(debug=True)
+    # socketio.run(app, host='127.0.0.1', port=5000)
+    app.run(debug=True)
     # asyncio.run(main())
