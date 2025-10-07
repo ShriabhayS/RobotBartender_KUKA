@@ -50,6 +50,29 @@ body{
     height: 100vh;
 }
 
+/* Starfield background */
+#starfield {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1; /* behind app content which uses higher z-index */
+    overflow: hidden;
+}
+.star {
+    position: absolute;
+    background: radial-gradient(circle, #ffffff 0%, rgba(255,255,255,0.7) 20%, rgba(255,255,255,0.0) 60%);
+    border-radius: 50%;
+    opacity: 0.9;
+    filter: drop-shadow(0 2px 6px rgba(255,255,255,0.06));
+}
+
+/* subtle twinkle via animation */
+@keyframes star-twinkle {
+    0% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.12); }
+    100% { opacity: 0.6; transform: scale(1); }
+}
+
 h1, h2, h3, h4, h5, h6{
     color: var(--text) !important;
 }
@@ -60,6 +83,7 @@ h1, h2, h3, h4, h5, h6{
     gap: 12px;
     /* flex-wrap: wrap; */
     /* justify-content: center; */
+    margin: 0 auto;
     margin-bottom: 12px;
     overflow-x: scroll;
     height: 80vh;
@@ -113,6 +137,7 @@ h1, h2, h3, h4, h5, h6{
     text-align: center;
     background-color: var(--bg);
     height: 120px;
+    z-index: 111;
 }
 
 .btn-wrap button .drink-title{
@@ -306,6 +331,8 @@ button{
     height: auto;
     object-fit: contain;
     visibility: visible;
+    /* rotate around bottom center for an 'upright' tilt */
+    transform-origin: center bottom;
 }
 
 .modal-fullscreen .modal-right { padding: 40px; min-height: 100vh; box-sizing: border-box; }
@@ -356,6 +383,17 @@ button{
 }
 .confirm-box .btn { min-width: 120px; }
 .confirm-box .btn + .btn { margin-left: 12px; }
+
+/* Tilt when user chooses 'open' — subtle and smooth */
+.modal-bottle-preview img {
+    transition: transform 320ms cubic-bezier(.2,.9,.2,1), filter 320ms ease;
+}
+.modal-bottle-preview img.open-tilt {
+    /* stronger tilt from the bottom */
+    transform-origin: center bottom;
+    transform: rotate(-10deg) translateY(-7px);
+    filter: drop-shadow(0 22px 48px rgba(0,0,0,0.5));
+}
 
 @media (max-width: 900px){
     .modal-fullscreen .modal-left { width: 100%; padding: 24px; }

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Robotic Bartender — Welcome</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+		<style>
+			/* Full-viewport centered layout */
+			:root {
+				--bg: #0b0b0c;
+				--card: rgba(255,255,255,0.06);
+				--accent: #0b74de;
+				--muted: rgba(255,255,255,0.75);
+			}
+			html,body { height:100%; margin:0; }
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+				background: linear-gradient(180deg,#06121a 0%, #08121a 40%, #05060a 100%);
+				color: white; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+				display:flex; align-items:center; justify-content:center; overflow:hidden;
+			}
+			.container {
+				width:100%; height:100%; display:flex; align-items:center; justify-content:center; padding:2rem; box-sizing:border-box;
+			}
+			.panel {
+				max-width:1300px; width:100%; height:calc(100% - 4rem); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+				display:flex; gap:3.5rem; align-items:center; justify-content:space-between; padding:3.25rem; box-sizing:border-box; box-shadow:0 26px 70px rgba(2,6,23,0.65);
+			}
+
+			/* Left: text / story */
+			.panel-left { flex:1 1 58%; min-width:340px; padding-right:1rem; }
+			.eyebrow { color:var(--accent); font-weight:700; letter-spacing:0.06em; margin-bottom:0.75rem; display:inline-block; }
+			h1 { margin:0; font-size:2.6rem; line-height:1.05; margin-bottom:1rem; }
+			p.lead { color:var(--muted); max-width:64ch; margin-top:0.5rem; font-size:1.08rem; }
+
+			/* Right: big order CTA */
+			.panel-right { flex: 0 0 380px; display:flex; align-items:center; justify-content:center; }
+			.cta-card { width:100%; background:var(--card); border-radius:14px; padding:2rem; text-align:center; }
+			.cta-title { font-size:1.15rem; color: #fff; margin-bottom:0.75rem; font-weight:700; }
+			.cta-desc { color:rgba(255,255,255,0.85); margin-bottom:1.25rem; }
+			.order-btn { display:inline-block; background:linear-gradient(90deg,var(--accent), #0073c9); color:white; border:none; padding:1.35rem 1.5rem; font-size:1.3rem; border-radius:12px; width:100%; cursor:pointer; box-shadow:0 14px 36px rgba(11,116,222,0.28); transition:transform .12s ease, box-shadow .12s ease; }
+			.order-btn:hover { transform:translateY(-4px); box-shadow:0 22px 46px rgba(11,116,222,0.34); }
+			.order-sub { margin-top:1rem; color:rgba(255,255,255,0.65); font-size:.95rem; }
+
+			/* Responsive */
+					@media (max-width: 900px) {
+						.panel { flex-direction:column; height:auto; max-height:calc(100% - 4rem); overflow:auto; padding:2rem; gap:1.25rem; }
+						body { align-items:flex-start; }
+						.panel-left { padding-right:0; }
+						.panel-right { width:100%; flex-basis:auto; }
+						.order-btn { font-size:1.05rem; padding:1rem; }
+					}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="panel" role="main" aria-labelledby="welcomeTitle">
+				<div class="panel-left">
+					<div class="eyebrow">Robotic Bartender</div>
+					<h1 id="welcomeTitle">We built something to make ordinary moments a little magical.</h1>
+					<p class="lead">We learned by doing. Small, safe motion steps, better sensors, and clear UI made the robot more reliable. This project picks a bottle and delivers it to you — opened or closed — and celebrates curiosity, iteration and careful engineering.</p>
+
+					<h3 style="margin-top:1.5rem;">How it works</h3>
+					<ul style="color:rgba(255,255,255,0.8);">
+						<li><strong>Simple UI</strong> for choosing a drink and whether you want it opened.</li>
+						<li><strong>Reliable control</strong> that breaks tasks into safe primitives for the KUKA arm.</li>
+						<li><strong>Sensors & opener</strong> that detect bottle presence and open when requested.</li>
+					</ul>
+
+					<p class="lead" style="margin-top:1rem;">Make sure the robot's workspace is clear, and enjoy the show — but always supervise hardware while it runs.</p>
+				</div>
+
+				<div class="panel-right">
+					<div class="cta-card" role="region" aria-label="Order a drink">
+						<div class="cta-title">Ready for a drink?</div>
+						<div class="cta-desc">Pick a bottle, choose opened or sealed, and we'll deliver it safely.</div>
+						<a href="/app" style="text-decoration:none;">
+							<button class="order-btn" id="orderBtn" aria-label="Order a drink now">Order a drink</button>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+

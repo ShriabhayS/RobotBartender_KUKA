@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_socketio import SocketIO
 from asyncua import Client
 from asyncua import ua
@@ -26,13 +26,25 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def main():
+    return render_template('info.html')
+
+
+@app.route('/app')
+def app_ui():
     return render_template('index.html')
 
 @app.route('/sendOrder/', methods=['POST'])
 def print_number():
     data = request.get_json()
-    asyncio.run(sendOrder(data['actionNumber'], data['bottleOpen']))
-    return 'Your order has been sent to the robot!'
+    try:
+        asyncio.run(sendOrder(data['actionNumber'], data['bottleOpen']))
+    except Exception as e:
+        # Log and return an error JSON so the frontend can react
+        print(f"Error sending order: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+    # On success, return a JSON payload with a redirect target
+    return jsonify({'status': 'ok', 'redirect': '/'})
 
 url = "opc.tcp://172.24.200.1:4840"
 

@@ -161,9 +161,9 @@
 
     <script>
         // robotFunc sends the order. If bottleOpen is provided, uses that; otherwise reads checkbox.
-        function robotFunc(actionNumber, bottleOpen) {
+        async function robotFunc(actionNumber, bottleOpen) {
             const bottleVal = (typeof bottleOpen !== 'undefined') ? (bottleOpen ? 1 : 0) : (document.getElementById('openBottle').checked ? 1 : 0);
-            fetch(`/sendOrder/`, {
+            const resp = await fetch(`/sendOrder/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -172,7 +172,18 @@
                     actionNumber: actionNumber,
                     bottleOpen: bottleVal
                 })
+            }).catch(err => {
+                console.error('Network error sending order', err);
+                throw new Error('Network error');
             });
+
+            // Try to parse JSON response
+            const data = await resp.json().catch(() => null);
+            if (!resp.ok) {
+                const msg = (data && data.message) ? data.message : `Server error (${resp.status})`;
+                throw new Error(msg);
+            }
+            return data;
         }
     </script>
 
@@ -194,6 +205,7 @@
                 const src = imgEl.getAttribute('src') || imgEl.src;
                 modalImg.src = src;
             }
+            if (modalImg) modalImg.classList.remove('open-tilt');
             if (titleEl && modalTitle) modalTitle.textContent = titleEl.textContent;
             if (descEl && modalDesc) modalDesc.textContent = descEl.textContent;
 
@@ -214,7 +226,7 @@
         }
 
         // Called when the modal Save changes button is clicked. Reads the stored action and calls robotFunc.
-        function confirmAction() {
+        async function confirmAction() {
             const action = parseInt(document.getElementById('selectedAction').value, 10);
             if (!action) {
                 // nothing selected
@@ -224,13 +236,37 @@
             // Use the chosen openBottleChoice (must be true/false) — if somehow unset, default to false
             const bottleChoice = (typeof window.openBottleChoice !== 'undefined') ? !!window.openBottleChoice : false;
 
-            // Call robotFunc with explicit bottleOpen
-            robotFunc(action, bottleChoice);
+            // Disable confirm buttons to avoid double submission
+            const confirmYes = document.querySelector('.confirm-box .btn-primary');
+            const confirmCancel = document.querySelector('.confirm-box .btn-secondary');
+            if (confirmYes) confirmYes.disabled = true;
+            if (confirmCancel) confirmCancel.disabled = true;
 
-            // Hide the modal
-            const modalEl = document.getElementById('bottleModal');
-            const modal = bootstrap.Modal.getInstance(modalEl);
-            if (modal) modal.hide();
+            try {
+                const result = await robotFunc(action, bottleChoice);
+
+                // Hide the modal
+                const modalEl = document.getElementById('bottleModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+
+                // If server returned redirect, follow it
+                if (result && result.redirect) {
+                    window.location.href = result.redirect;
+                } else if (result && result.status === 'ok') {
+                    window.location.href = '/';
+                } else {
+                    // Fallback
+                    window.location.href = '/';
+                }
+            } catch (err) {
+                console.error('Failed to place order:', err);
+                alert('Failed to place order: ' + (err.message || 'Unknown error'));
+            } finally {
+                if (confirmYes) confirmYes.disabled = false;
+                if (confirmCancel) confirmCancel.disabled = false;
+                hideConfirmOverlay();
+            }
         }
 
         function showConfirmOverlay() {
@@ -254,6 +290,9 @@
 
     <!-- Tilt behavior for horizontal scroller images -->
     <script src="{{ url_for('static', filename='tilt.js') }}"></script>
+
+    <!-- Subtle starfield background -->
+    <script src="{{ url_for('static', filename='stars.js') }}"></script>
 
     <script>
         function setOpenBottle(state) {
@@ -280,6 +319,12 @@
             window.openBottleChoice = !!state;
             const saveBtn = document.getElementById('modalSaveBtn');
             if (saveBtn) saveBtn.disabled = false;
+
+            // add subtle tilt to the preview when open is chosen
+            const modalImg = document.getElementById('modalBottleImg');
+            if (modalImg) {
+                if (state) modalImg.classList.add('open-tilt'); else modalImg.classList.remove('open-tilt');
+            }
         }
 
         // Initialize toggle state on page load based on checkbox (default unchecked)
